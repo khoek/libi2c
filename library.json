@@ -1,6 +1,6 @@
 {
     "name": "libi2c",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A library built on esp-idf for managing I2C sensors and other peripherials.",
     "keywords": "sensor, peripherial, i2c, host, master, hardware, esp-idf, esp32, esp8266",
     "repository": {

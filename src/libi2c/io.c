@@ -35,6 +35,8 @@ void i2c_7bit_destroy(i2c_7bit_handle_t dev) {
 }
 
 esp_err_t i2c_7bit_reg_read(i2c_7bit_handle_t dev, uint8_t reg, size_t count, uint8_t* data) {
+    assert(count);
+
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 
     i2c_master_start(cmd);
@@ -57,7 +59,9 @@ esp_err_t i2c_7bit_reg_write(i2c_7bit_handle_t dev, uint8_t reg, size_t count, c
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, (((uint8_t) dev->addr) << 1) | I2C_MASTER_WRITE, true);
     i2c_master_write_byte(cmd, ((uint8_t) reg), true);
-    i2c_master_write(cmd, data, count, true);
+    if (count) {
+        i2c_master_write(cmd, data, count, true);
+    }
     i2c_master_stop(cmd);
 
     esp_err_t ret = i2c_master_cmd_begin(dev->port, cmd, 1000 / portTICK_RATE_MS);

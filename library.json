@@ -1,6 +1,6 @@
 {
     "name": "libi2c",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "A library built on esp-idf for managing I2C sensors and other peripherials.",
     "keywords": "sensor, peripherial, i2c, host, master, hardware, esp-idf, esp32, esp8266",
     "repository": {
@@ -17,5 +17,6 @@
     "license": "MIT",
     "homepage": "https://github.com/khoek/libi2c",
     "frameworks": "espidf",
-    "platforms": "espressif32"
+    "platforms": "espressif32",
+    "dependencies": {}
 }

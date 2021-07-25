@@ -17,10 +17,14 @@ void i2c_7bit_init(i2c_port_t port, uint8_t addr, i2c_7bit_handle_t* out_dev);
 // Release the given handle.
 void i2c_7bit_destroy(i2c_7bit_handle_t dev);
 
-// Read a register `count` bytes to a register over I2C.
-esp_err_t i2c_7bit_reg_read(i2c_7bit_handle_t dev, uint8_t reg, size_t count, uint8_t* data);
+// Read a register `count` bytes from a register over I2C.
+esp_err_t i2c_7bit_reg_read(i2c_7bit_handle_t dev, const uint8_t* reg, size_t reg_count,
+                            uint8_t* data, size_t data_count);
+esp_err_t i2c_7bit_reg8b_read(i2c_7bit_handle_t dev, uint8_t reg, uint8_t* data, size_t data_count);
 
 // Write `count` bytes to a register over I2C.
-esp_err_t i2c_7bit_reg_write(i2c_7bit_handle_t dev, uint8_t reg, size_t count, const uint8_t* data);
+esp_err_t i2c_7bit_reg_write(i2c_7bit_handle_t dev, const uint8_t* reg, size_t reg_count,
+                             const uint8_t* data, size_t data_count);
+esp_err_t i2c_7bit_reg8b_write(i2c_7bit_handle_t dev, uint8_t reg, const uint8_t* data, size_t data_count);
 
 #endif

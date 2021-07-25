@@ -34,17 +34,20 @@ void i2c_7bit_destroy(i2c_7bit_handle_t dev) {
     free(dev);
 }
 
-esp_err_t i2c_7bit_reg_read(i2c_7bit_handle_t dev, uint8_t reg, size_t count, uint8_t* data) {
-    assert(count);
+esp_err_t i2c_7bit_reg_read(i2c_7bit_handle_t dev, const uint8_t* reg, size_t reg_count,
+                            uint8_t* data, size_t data_count) {
+    assert(data_count);
 
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 
     i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (((uint8_t) dev->addr) << 1) | I2C_MASTER_WRITE, true);
-    i2c_master_write_byte(cmd, ((uint8_t) reg), true);
-    i2c_master_start(cmd);
+    if (reg_count) {
+        i2c_master_write_byte(cmd, (((uint8_t) dev->addr) << 1) | I2C_MASTER_WRITE, true);
+        i2c_master_write(cmd, reg, reg_count, true);
+        i2c_master_start(cmd);
+    }
     i2c_master_write_byte(cmd, (((uint8_t) dev->addr) << 1) | I2C_MASTER_READ, true);
-    i2c_master_read(cmd, data, count, I2C_MASTER_LAST_NACK);
+    i2c_master_read(cmd, data, data_count, I2C_MASTER_LAST_NACK);
     i2c_master_stop(cmd);
 
     esp_err_t ret = i2c_master_cmd_begin(dev->port, cmd, 1000 / portTICK_RATE_MS);
@@ -53,14 +56,15 @@ esp_err_t i2c_7bit_reg_read(i2c_7bit_handle_t dev, uint8_t reg, size_t count, ui
     return ret;
 }
 
-esp_err_t i2c_7bit_reg_write(i2c_7bit_handle_t dev, uint8_t reg, size_t count, const uint8_t* data) {
+esp_err_t i2c_7bit_reg_write(i2c_7bit_handle_t dev, const uint8_t* reg, size_t reg_count,
+                             const uint8_t* data, size_t data_count) {
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, (((uint8_t) dev->addr) << 1) | I2C_MASTER_WRITE, true);
-    i2c_master_write_byte(cmd, ((uint8_t) reg), true);
-    if (count) {
-        i2c_master_write(cmd, data, count, true);
+    i2c_master_write(cmd, reg, reg_count, true);
+    if (data_count) {
+        i2c_master_write(cmd, data, data_count, true);
     }
     i2c_master_stop(cmd);
 
@@ -68,4 +72,12 @@ esp_err_t i2c_7bit_reg_write(i2c_7bit_handle_t dev, uint8_t reg, size_t count, c
     i2c_cmd_link_delete(cmd);
 
     return ret;
+}
+
+esp_err_t i2c_7bit_reg8b_read(i2c_7bit_handle_t dev, uint8_t reg, uint8_t* data, size_t data_count) {
+    return i2c_7bit_reg_read(dev, &reg, 1, data, data_count);
+}
+
+esp_err_t i2c_7bit_reg8b_write(i2c_7bit_handle_t dev, uint8_t reg, const uint8_t* data, size_t data_count) {
+    return i2c_7bit_reg_write(dev, &reg, 1, data, data_count);
 }
